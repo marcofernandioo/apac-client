@@ -1,0 +1,82 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http'
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators'
+import { IIntake } from '../interfaces/intake.interface';
+import { IUserLogin } from '../interfaces/userlogin.interface'
+import { ILoginResponse } from '../interfaces/loginresponse.interface'
+import { IGroup } from '../interfaces/group.interface';
+
+
+@Injectable({
+  providedIn: 'root'
+})
+export class DataService {
+  apiurl: string = 'http://localhost:8001'
+  tokenKey: string = 'auth_token';
+  token: string = '';
+
+  constructor(private http: HttpClient) { }
+
+  setToken(token: string) {
+    localStorage.setItem(this.tokenKey, token);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem(this.tokenKey);
+  }
+
+  clearToken() {
+    localStorage.removeItem(this.tokenKey);
+  }
+
+  private getHeaders(): HttpHeaders {
+    // const token = this.getToken();
+    const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzY2hlZHVsZXJAbWFpbC5hcHUuZWR1Lm15Iiwicm9sZSI6InNjaGVkdWxlciIsImV4cCI6MTcyMTgxODI0OX0.XeG_UkILtn6Mi-YgysIRTOR30TQhEg8x5YL5GEih7DQ`
+
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
+  // Get all INTAKES.
+  getAllIntakes(): Observable<IIntake[]> {
+    return this.http.get<IIntake[]>(`${this.apiurl}/scheduler/intakes/semester/all`, { headers: this.getHeaders() });
+  }
+
+  // Create an INTAKE.
+  createIntake(intakeData: any): Observable<IIntake> {
+    return this.http.post<IIntake>(`${this.apiurl}/scheduler/intake/`, intakeData, { headers: this.getHeaders() });
+  }
+
+  // Create a Group.
+  createGroup(groupData: any): Observable<IGroup> {
+    return this.http.post<IGroup>(`${this.apiurl}/group`, groupData, { headers: this.getHeaders() })
+  }
+
+  // Get all Group
+  getGroups(id: any, type: any): Observable<IGroup> {
+    return this.http.get<IGroup>(`${this.apiurl}/group/all?parentid=${id}&parenttype=${type}`, { headers: this.getHeaders() })
+  }
+
+  // Get all Parents
+  getParents() {
+    return this.http.get<any>(`${this.apiurl}/parent/all`, {headers: this.getHeaders() })
+  }
+
+  login(email: string, password: string): Observable<ILoginResponse> {
+    const loginData: IUserLogin = { email, password };
+    return this.http.post<ILoginResponse>(`${this.apiurl}/auth/login`, loginData)
+      .pipe(
+        tap(response => {
+          // Store the token in localStorage
+          localStorage.setItem('access_token', response.access_token);
+        })
+      );
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.getToken();
+  }
+
+}

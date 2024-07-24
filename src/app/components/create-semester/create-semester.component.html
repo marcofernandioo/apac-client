@@ -1,0 +1,17 @@
+<mat-form-field>
+    <mat-label>Select a Group</mat-label>
+    <mat-select [(ngModel)]="selectedIntake">
+        <mat-option *ngFor="let semester of intakeList" [value]="semester.semestername">
+            {{ semester.semestername }}
+        </mat-option>
+    </mat-select>
+</mat-form-field>
+
+<mat-form-field>
+    <mat-label>Select an Intake</mat-label>
+    <mat-select [(ngModel)]="selectedGroup">
+      <mat-option *ngFor="let semester of intakeList" [value]="semester.semestername">
+        {{ semester.semestername }}
+      </mat-option>
+    </mat-select>
+</mat-form-field>

@@ -1,0 +1,29 @@
+<mat-form-field>
+    <mat-label>Select a Program / Course</mat-label>
+    <mat-select (selectionChange)="onSelectedParentChange($event)">
+      <mat-option value=" ">
+        All
+      </mat-option>
+      <mat-option *ngFor="let parent of parentList" [value]="parent">
+        {{ getParentName(parent) }}
+      </mat-option>
+    </mat-select>
+</mat-form-field>
+
+<app-timeline-table [subProgrammeList]="subProgrammeList" [semesters]="semesters" ></app-timeline-table>
+
+<br/>
+<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" animationDuration="0ms">
+    <mat-tab label="Create Group">
+        <app-create-group [parentId]="selectedParentId" [parentType]="selectedParentType"></app-create-group>
+    </mat-tab>
+    <mat-tab label="Create Intake">
+        <app-create-intake [parentId]="selectedParentId" [parentType]="selectedParentType"></app-create-intake>
+    </mat-tab>
+    <mat-tab label="Create Semester">
+        <app-create-semester></app-create-semester>
+    </mat-tab>
+    <mat-tab label="Edit Semester">
+        <app-edit-semester></app-edit-semester>
+    </mat-tab>
+</mat-tab-group>
