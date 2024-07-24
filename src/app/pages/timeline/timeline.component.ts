@@ -26,6 +26,7 @@ export class TimelineComponent implements OnInit {
   // selectedParentName: string = '';
   selectedParentId: string = '';
   selectedParentType: string = '';
+  selectedParentCode: string = '';
 
   subProgrammeList: DataSet<SubProgramme> = new DataSet<SubProgramme>([
     { id: 1, content: 'CERTIFICATE 2023', nestedGroups: [2, 3, 5] },
@@ -71,6 +72,7 @@ export class TimelineComponent implements OnInit {
     // console.log("Selected: ", event.value);
     console.log('changed from parent',this.selectedParentId, this.selectedParentType)
     this.selectedParentId = event.value.id;
+    this.selectedParentCode = event.value.code;
     if (event.value.coursename) 
       this.selectedParentType = "course";
     if (event.value.programmename)

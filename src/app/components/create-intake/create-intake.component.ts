@@ -31,6 +31,7 @@ export class CreateIntakeComponent implements OnInit, OnChanges {
 
   @Input() parentId: string | null = '';
   @Input() parentType: string | null = '';
+  @Input() parentCode: string | null = '';
 
   selectedProgramme: string | null = '';
   groupList: any[] | null = null;
@@ -68,11 +69,10 @@ export class CreateIntakeComponent implements OnInit, OnChanges {
   }
 
   loadGroupList() {
-    console.log('load fn')
     this.api.getGroups(this.parentId, this.parentType).subscribe({
       next: (response) => {
         this.groupList = Array.isArray(response) ? response : [response];
-        console.log('Groups loaded:', this.groupList);
+        // console.log('Groups loaded:', this.groupList);
       },
       error: (error) => {
         console.error('Error loading groups:', error);
@@ -82,12 +82,10 @@ export class CreateIntakeComponent implements OnInit, OnChanges {
   }
 
   updateIntakePrefix() {
-    // if (this.selectedProgramme && this.semesterStartDate) {
-      if ( this.semesterStartDate) {
+      if (this.semesterStartDate) {
       const year = this.semesterStartDate.getFullYear().toString().substr(-2);
       const month = (this.semesterStartDate.getMonth() + 1).toString().padStart(2, '0');
-      // this.intakePrefix = `${this.selectedProgramme.toUpperCase()}${year}${month}`;
-      this.intakePrefix = `${'CERTIFICATE'}${year}${month}`;
+      this.intakePrefix = `${this.parentCode}${year}${month}`;
     } else {
       this.intakePrefix = '';
     }
@@ -104,18 +102,20 @@ export class CreateIntakeComponent implements OnInit, OnChanges {
   }
 
   onSelectedGroupChange(event: MatSelectChange) {
+    console.log(event.value);
     this.selectedGroup = event.value;
   }
 
   onSubmit() {
     const intakeData = {
-      groupid: 3,
+      groupid: this.selectedGroup.id,
       code: this.intakePrefix,
       orientation: this.formatDateToYYYYMMDD(this.orientationDate),
       startdate: this.formatDateToYYYYMMDD(this.semesterStartDate),
       enddate: this.formatDateToYYYYMMDD(this.semesterEndDate),
       duration: this.duration
     }
+    console.log(intakeData);
     this.api.createIntake(intakeData).subscribe({
       next: (response) => {
         console.log(response);

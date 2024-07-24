@@ -32,7 +32,7 @@ export class DataService {
 
   private getHeaders(): HttpHeaders {
     // const token = this.getToken();
-    const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzY2hlZHVsZXJAbWFpbC5hcHUuZWR1Lm15Iiwicm9sZSI6InNjaGVkdWxlciIsImV4cCI6MTcyMTgxODI0OX0.XeG_UkILtn6Mi-YgysIRTOR30TQhEg8x5YL5GEih7DQ`
+    const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzY2hlZHVsZXJAbWFpbC5hcHUuZWR1Lm15Iiwicm9sZSI6InNjaGVkdWxlciIsImV4cCI6MTcyMTg1Njk1NX0.GwNIsqseMnKafOl0bTyuaf7lNfBvWtokwuom6RYEtGg`
 
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`
@@ -49,19 +49,29 @@ export class DataService {
     return this.http.post<IIntake>(`${this.apiurl}/scheduler/intake/`, intakeData, { headers: this.getHeaders() });
   }
 
+  // Create Semesters in Bulk
+  createBulkSemesters(data: any, intakeId: Number): Observable<any> {
+    return this.http.post<any>(`${this.apiurl}/scheduler/semester/create?intake_id=${intakeId}`, data, {headers: this.getHeaders() });
+  }
+
   // Create a Group.
   createGroup(groupData: any): Observable<IGroup> {
     return this.http.post<IGroup>(`${this.apiurl}/group`, groupData, { headers: this.getHeaders() })
   }
 
   // Get all Group
-  getGroups(id: any, type: any): Observable<IGroup> {
-    return this.http.get<IGroup>(`${this.apiurl}/group/all?parentid=${id}&parenttype=${type}`, { headers: this.getHeaders() })
+  getGroups(id: any, type: any): Observable<IGroup[]> {
+    return this.http.get<IGroup[]>(`${this.apiurl}/group/all?parentid=${id}&parenttype=${type}`, { headers: this.getHeaders() })
   }
 
   // Get all Parents
   getParents() {
     return this.http.get<any>(`${this.apiurl}/parent/all`, {headers: this.getHeaders() })
+  }
+
+  // Get Intakes by list of Group IDs.
+  getIntakesByGroupIdList(list: Number[]) {
+    return this.http.get<any>(`${this.apiurl}/scheduler/intake/all?group_ids=${list}`, {headers: this.getHeaders()})
   }
 
   login(email: string, password: string): Observable<ILoginResponse> {

@@ -1,17 +1,41 @@
-<mat-form-field>
-    <mat-label>Select a Group</mat-label>
-    <mat-select [(ngModel)]="selectedIntake">
-        <mat-option *ngFor="let semester of intakeList" [value]="semester.semestername">
-            {{ semester.semestername }}
-        </mat-option>
-    </mat-select>
-</mat-form-field>
+<!-- Get all the intakes that belongs to a Parent. -->
 
 <mat-form-field>
     <mat-label>Select an Intake</mat-label>
-    <mat-select [(ngModel)]="selectedGroup">
-      <mat-option *ngFor="let semester of intakeList" [value]="semester.semestername">
-        {{ semester.semestername }}
+    <mat-select (selectionChange)="onSelectedIntakeChange($event)">
+      <mat-option *ngFor="let intake of availableIntakes" [value]="intake.id">
+        {{ intake.code }}
       </mat-option>
     </mat-select>
 </mat-form-field>
+
+  <form [formGroup]="dateRangeForm">
+    <div formGroupName="semesters">
+      <div *ngFor="let semesterNum of semesters" [formGroupName]="'semester' + semesterNum">
+        <h2>Semester {{ semesterNum }}</h2>
+        <div *ngFor="let range of dateRanges" [formGroupName]="range.name">
+          <h3>{{ range.label }}</h3>
+          <mat-form-field appearance="fill">
+            <mat-label>Start Date</mat-label>
+            <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+            <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+          </mat-form-field>
+  
+          <mat-form-field appearance="fill">
+            <mat-label>End Date</mat-label>
+            <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+            <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+          </mat-form-field>
+  
+          <mat-form-field appearance="fill">
+            <mat-label>Duration (weeks)</mat-label>
+            <input matInput type="number" formControlName="duration">
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </form>
+  
+  <button mat-raised-button color="primary" (click)="submitForm()">Create Semesters</button>

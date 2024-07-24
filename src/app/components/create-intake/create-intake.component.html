@@ -3,7 +3,7 @@
 <mat-form-field>
     <mat-label>Select a Group</mat-label>
     <mat-select (selectionChange)="onSelectedGroupChange($event)">
-      <mat-option *ngFor="let group of groupList" [value]="group.groupname">
+      <mat-option *ngFor="let group of groupList" [value]="group">
         {{ group.groupname }}
       </mat-option>
     </mat-select>

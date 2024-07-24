@@ -18,10 +18,10 @@
         <app-create-group [parentId]="selectedParentId" [parentType]="selectedParentType"></app-create-group>
     </mat-tab>
     <mat-tab label="Create Intake">
-        <app-create-intake [parentId]="selectedParentId" [parentType]="selectedParentType"></app-create-intake>
+        <app-create-intake [parentId]="selectedParentId" [parentType]="selectedParentType" [parentCode]="selectedParentCode"></app-create-intake>
     </mat-tab>
     <mat-tab label="Create Semester">
-        <app-create-semester></app-create-semester>
+        <app-create-semester [parentId]="selectedParentId" [parentType]="selectedParentType"></app-create-semester>
     </mat-tab>
     <mat-tab label="Edit Semester">
         <app-edit-semester></app-edit-semester>
