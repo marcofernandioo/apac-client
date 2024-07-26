@@ -11,7 +11,7 @@
 
 <mat-form-field>
     <br />
-    <mat-label>Semester Start Date</mat-label>
+    <mat-label>Intake Start Date</mat-label>
     <input matInput [matDatepicker]="startPicker" [(ngModel)]="semesterStartDate" (ngModelChange)="onStartDateChange()">
     <mat-hint>MM/DD/YYYY</mat-hint>
     <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
@@ -19,7 +19,7 @@
 </mat-form-field>
 
 <mat-form-field>
-    <mat-label>Semester End Date</mat-label>
+    <mat-label>Intake End Date</mat-label>
     <input matInput [matDatepicker]="endPicker" [(ngModel)]="semesterEndDate" >
     <mat-hint>MM/DD/YYYY</mat-hint>
     <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>

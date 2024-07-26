@@ -1,6 +1,6 @@
 <mat-form-field>
     <mat-label>Select Year</mat-label>
-    <mat-select (selectionChange)="onSelectedYearChange($event)">
+    <mat-select [(value)]="selectedYear" (selectionChange)="onSelectedYearChange($event)">
       <mat-option *ngFor="let year of yearList" [value]="year">
         {{ year }}
       </mat-option>
@@ -9,7 +9,7 @@
 
 <button mat-raised-button color="primary" (click)="downloadCSV()">Download CSV</button>
 
-<table mat-table [dataSource]="yearlyIntakes" class="mat-elevation-z8">
+<table mat-table [dataSource]="yearlyIntakesAsTable" class="mat-elevation-z8">
     <!-- Code Column -->
     <ng-container matColumnDef="code">
       <th mat-header-cell *matHeaderCellDef> Code </th>

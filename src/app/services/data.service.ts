@@ -61,7 +61,7 @@ export class DataService {
 
   // Get all INTAKES.
   getAllIntakes(): Observable<IIntake[]> {
-    return this.http.get<IIntake[]>(`${this.apiurl}/scheduler/intakes/semester/all`, { headers: this.getHeaders() });
+    return this.http.get<IIntake[]>(`${this.apiurl}/scheduler/intake/all`, { headers: this.getHeaders() });
   }
 
   // Create an INTAKE.
@@ -94,8 +94,9 @@ export class DataService {
     return this.http.get<any>(`${this.apiurl}/scheduler/intake/all?group_ids=${list}`, { headers: this.getHeaders() });
   }
 
-  getIntakesByYear(year: Number) {
-    return this.http.get<any>(`${this.apiurl}/scheduler/intake/all?year=${year}`, { headers: this.getHeaders() });
+  getIntakesByYear(year: Number):  Observable<IIntake[]> {
+    console.log(year);
+    return this.http.get<IIntake[]>(`${this.apiurl}/scheduler/intake/all?year=${year}`, { headers: this.getHeaders() });
   }
 
   // Get all the semesters of a certain IntakeID
