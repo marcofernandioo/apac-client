@@ -42,8 +42,7 @@ export class CreateIntakeComponent implements OnInit, OnChanges {
   intakePrefix: String = '';
   duration: Number = 1;
 
-  constructor(private api: DataService, private dateAdapter: DateAdapter<Date>) {
-    this.dateAdapter.setLocale('en-GB'); // Set to your preferred locale
+  constructor(private api: DataService) {
   }
 
   formatDateToYYYYMMDD(date: Date): string {
@@ -60,7 +59,6 @@ export class CreateIntakeComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
       if (changes['parentId'] || changes['parentType']) {
-        console.log(this.parentId, this.parentType);
         this.loadGroupList();
       }
   }
@@ -69,7 +67,6 @@ export class CreateIntakeComponent implements OnInit, OnChanges {
     this.api.getGroups(this.parentId, this.parentType).subscribe({
       next: (response) => {
         this.groupList = Array.isArray(response) ? response : [response];
-        // console.log('Groups loaded:', this.groupList);
       },
       error: (error) => {
         console.error('Error loading groups:', error);
@@ -94,13 +91,17 @@ export class CreateIntakeComponent implements OnInit, OnChanges {
   }
 
   onStartDateChange() {
-    console.log(this.intakePrefix);
     this.updateIntakePrefix();
   }
 
   onSelectedGroupChange(event: MatSelectChange) {
-    console.log(event.value);
     this.selectedGroup = event.value;
+  }
+
+  calculateDuration() {
+    const timeDifference = this.semesterEndDate.getTime() - this.semesterStartDate.getTime();
+    const weeksDifference = timeDifference / (1000 * 60 * 60 * 24 * 7);
+    return Math.floor(weeksDifference);
   }
 
   onSubmit() {
@@ -110,16 +111,13 @@ export class CreateIntakeComponent implements OnInit, OnChanges {
       orientation: this.formatDateToYYYYMMDD(this.orientationDate),
       startdate: this.formatDateToYYYYMMDD(this.semesterStartDate),
       enddate: this.formatDateToYYYYMMDD(this.semesterEndDate),
-      duration: this.duration
+      duration: this.calculateDuration()
     }
-    console.log(intakeData);
     this.api.createIntake(intakeData).subscribe({
       next: (response) => {
-        console.log(response);
         alert('Intake Added Successfully')
       },
       error: (error) => {
-        console.log(error);
         alert('Error creating intake, please try again')
       }
     })
