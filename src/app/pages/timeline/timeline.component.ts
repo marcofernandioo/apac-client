@@ -32,21 +32,16 @@ export class TimelineComponent implements OnInit {
   selectedParentId: string = '';
   selectedParentType: string = '';
   selectedParentCode: string = '';
+  semesterNumbers: Number = 2;
+
 
   timelineDataset: DataSet<ITimeline> = new DataSet();
 
-  semesters: DataSet<any> = new DataSet<any>([
-    { id: 1, group: 2, content: 'Semester 1', start: new Date(2023, 0, 1), end: new Date(2023, 0, 5) },
-    { id: 2, group: 2, content: 'Semester 2', start: new Date(2023, 0, 6), end: new Date(2023, 0, 10) },
-    { id: 3, group: 3, content: 'Semester 3', start: new Date(2023, 0, 3), end: new Date(2023, 0, 8) },
-    { id: 4, group: 5, content: 'Semester 4', start: new Date(2023, 0, 5), end: new Date(2023, 0, 12) },
-    { id: 5, group: 6, content: 'Semester 5', start: new Date(2023, 0, 8), end: new Date(2023, 0, 15) }
-  ]);
+  semesters: DataSet<any> = new DataSet<any>();
 
   constructor(
     private api: DataService, 
     private cdr: ChangeDetectorRef,
-    private timelineDataService: TimelineDataService
   ) { }
 
   ngOnInit(): void {
@@ -57,11 +52,10 @@ export class TimelineComponent implements OnInit {
     this.api.getParents().subscribe({
       next: (response) => {
         this.parentList = response.items;
-        console.log('Parents loaded:', this.parentList);
+        console.log(this.parentList);
       },
       error: (error) => {
         console.error('Error loading parents:', error);
-        // Handle error (e.g., show an error message to the user)
       }
     })
   }
@@ -71,21 +65,22 @@ export class TimelineComponent implements OnInit {
   }
 
   onSelectedParentChange(event: MatSelectChange) {
-    // console.log("Selected: ", event.value);
     console.log('changed from parent',this.selectedParentId, this.selectedParentType)
     this.selectedParentId = event.value.id;
     this.selectedParentCode = event.value.code;
-    if (event.value.coursename) 
+    if (event.value.coursename)  {
+      this.semesterNumbers = 2;
       this.selectedParentType = "course";
-    if (event.value.programmename)
+    }
+
+    if (event.value.programmename) {
       this.selectedParentType = "programme";
+      this.semesterNumbers = event.value.semesters;
+    }
     this.loadTimelineDataset();
     this.cdr.detectChanges();
   }
 
-  // From the selected parent, get all the groups.
-  // When we want to add feature to filter by year, we can just get the
-  // group with specific year. 
   async getGroups(): Promise<IGroup[]> {
     return new Promise((resolve, reject) => {
       this.api.getGroups(this.selectedParentId, this.selectedParentType).subscribe({
@@ -112,7 +107,6 @@ export class TimelineComponent implements OnInit {
 
   // From the queried groups id, get all the semesters.
   async getSemesters(list: any):Promise<any[]> {
-    // Return all semesters.
     return new Promise((resolve, reject) => {
       this.api.getSemestersByIntakeIdList(list).subscribe({
         next: (res) => resolve (res),
@@ -156,7 +150,7 @@ export class TimelineComponent implements OnInit {
       
       data: {
         id: index + 1,
-        group: '',  // Leave blank for now
+        group: '', 
         content: semester.name,
         start: new Date(semester.startdate),
         end: new Date(semester.enddate)
@@ -166,22 +160,10 @@ export class TimelineComponent implements OnInit {
     }));
   }
 
-  // data is the output of the transformedData.
   assignIntakeId(data: any[], intakeList: any[], tl: any[]) {
-    // console.log(data);
-    // in the temporaryIntake, from the intake id, get the "name".
-    // in the allSemesters, from the "name", get the id.
-    // assign this id to semester's object's group.
     return data.map((object) => {
       const intakeName = intakeList.find(int => int.id === object.intakeId)?.code;
       const sumthing = tl.find(sem => sem.content === intakeName)?.id;
-      // return {
-      //   ...object,
-      //   data: {
-      //     ...object.data,
-      //     group: sumthing || '' // Use an empty string if sumthing is undefined
-      //   }
-      // };
       return {
         ...object.data,
         group: sumthing
@@ -189,10 +171,6 @@ export class TimelineComponent implements OnInit {
     })
 
   }
-
-
-  // const temporarySemesters = await this.getSemesters(groupIdList);
-    // console.log(temporarySemesters);
 
   async loadTimelineDataset() {
     this.timelineDataset = new DataSet();

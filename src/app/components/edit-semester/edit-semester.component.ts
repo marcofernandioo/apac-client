@@ -1,20 +1,4 @@
-// import { Component, OnInit } from '@angular/core';
-
-// @Component({
-//   selector: 'app-edit-semester',
-//   templateUrl: './edit-semester.component.html',
-//   styleUrls: ['./edit-semester.component.css']
-// })
-// export class EditSemesterComponent implements OnInit {
-
-//   constructor() { }
-
-//   ngOnInit(): void {
-//   }
-
-// }
-
-import { Component, OnInit, OnChanges, Input, SimpleChanges } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, SimpleChanges, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { DataService } from 'src/app/services/data.service';
@@ -25,18 +9,6 @@ interface DateRange {
   label: string;
 }
 
-interface Semester {
-  id: number;
-  intakeId: number;
-  semesterNumber: number;
-  ranges: {
-    [key: string]: {
-      startDate: string;
-      endDate: string;
-      duration: number;
-    };
-  };
-}
 
 @Component({
   selector: 'app-edit-semester',
@@ -46,9 +18,9 @@ interface Semester {
 export class EditSemesterComponent implements OnInit, OnChanges {
   @Input() parentId: string | null = '';
   @Input() parentType: string | null = '';
+  @Input() numberOfSemesters: any = 2;
 
   dateRangeForm!: FormGroup;
-  numberOfSemesters = 1;
   semesters: number[] = [];
   selectedIntakeID!: number;
   groupIdList: number[] | null = null; // Not displayed
@@ -69,29 +41,34 @@ export class EditSemesterComponent implements OnInit, OnChanges {
   constructor(
     private fb: FormBuilder,
     private api: DataService,
-    private http: HttpClient
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.initForm();
-    // this.fetchAvailableIntakes();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['parentId'] || changes['parentType']) {
+    if (changes['parentId'] || changes['parentType'] || changes['numberOfSemesters']) {
       console.log(this.parentId, this.parentType);
       this.loadGroupIdList();
+      if (changes['numberOfSemesters']) {
+        this.updateSemesters();
+        this.initForm();
+      }
+      this.cdr.detectChanges();
     }
+  }
+
+  updateSemesters() {
+    this.semesters = Array(this.numberOfSemesters).fill(0).map((_, i) => i + 1);
   }
 
   loadGroupIdList() {
     this.api.getGroups(this.parentId, this.parentType).subscribe({
       next: (response) => {
-        console.log('groups:')
-        console.log(response);
         this.groupIdList = response.map(item => item.id)
         this.loadIntakesList(this.groupIdList);
-        console.log(this.groupIdList)
       },
       error: (error) => {
         console.error('Error loading groups:', error);
@@ -103,7 +80,6 @@ export class EditSemesterComponent implements OnInit, OnChanges {
   loadIntakesList(list: any) {
     this.api.getIntakesByGroupIdList(list).subscribe({
       next: (response) => {
-        console.log('Another data loaded:', response);
         this.availableIntakes = response;
       },
       error: (error) => {
@@ -114,25 +90,38 @@ export class EditSemesterComponent implements OnInit, OnChanges {
   }
 
   initForm() {
-    this.dateRangeForm = this.fb.group({
-      semesters: this.fb.group({})
+    const semestersGroup = this.fb.group({});
+
+  // Clear existing controls
+  if (this.dateRangeForm) {
+    const existingSemesters = this.dateRangeForm.get('semesters') as FormGroup;
+    Object.keys(existingSemesters.controls).forEach(key => {
+      existingSemesters.removeControl(key);
+    });
+  }
+
+  this.semesters.forEach(semesterNum => {
+    const semesterGroup = this.fb.group({});
+    
+    this.dateRanges.forEach(range => {
+      semesterGroup.addControl(range.name, this.fb.group({
+        startDate: [''],
+        endDate: [''],
+        duration: ['']
+      }));
+      this.editingState[`semester${semesterNum}_${range.name}`] = false;
     });
 
-    for (let i = 1; i <= this.numberOfSemesters; i++) {
-      this.semesters.push(i);
-      const semesterGroup = this.fb.group({});
-      
-      this.dateRanges.forEach(range => {
-        semesterGroup.addControl(range.name, this.fb.group({
-          startDate: [''],
-          endDate: [''],
-          duration: ['']
-        }));
-        this.editingState[`semester${i}_${range.name}`] = false;
-      });
+    semestersGroup.addControl(`semester${semesterNum}`, semesterGroup);
+  });
 
-      (this.dateRangeForm.get('semesters') as FormGroup).addControl(`semester${i}`, semesterGroup);
-    }
+  if (this.dateRangeForm) {
+    this.dateRangeForm.setControl('semesters', semestersGroup);
+  } else {
+    this.dateRangeForm = this.fb.group({
+      semesters: semestersGroup
+    });
+  }
   }
 
   onSelectedIntakeChange(event: any) {
@@ -143,11 +132,9 @@ export class EditSemesterComponent implements OnInit, OnChanges {
   fetchSemesterData() {
     this.api.getSemestersByIntakeId(String(this.selectedIntakeID)).subscribe({
       next: (res) => {
-        // console.log(res);
         this.populateForm(res);
       },
       error: (err) => {
-        // console.log(err);
         alert('error')
       }
     })
@@ -234,16 +221,7 @@ export class EditSemesterComponent implements OnInit, OnChanges {
     const rangeGroup = semesterGroup?.get(rangeName) as FormGroup;
 
     // Get the entire form data
-    const formData = this.dateRangeForm.value;
     rangeGroup.patchValue(this.dateRangeForm.value.semesters[`semester${semesterNumber}`].semester)
-
-    // Add the selected intake ID to the data
-    const dataToSend = {
-      intakeId: this.selectedIntakeID,
-      semesters: formData.semesters
-    };
-
-    // console.log(dataToSend);
 
     delete this.originalValues[key];
     rangeGroup.disable();
@@ -260,7 +238,6 @@ export class EditSemesterComponent implements OnInit, OnChanges {
     // Revert to original values
     if (this.originalValues[key]) {
       rangeGroup.patchValue(this.originalValues[key]);
-      // console.log(this.originalValues[key]);
       delete this.originalValues[key]; // Clean up stored original values
     }
     
@@ -270,7 +247,6 @@ export class EditSemesterComponent implements OnInit, OnChanges {
 
   
   formatData(input: any): any {
-    // console.log(input);
     const output: any = [];
 
     Object.entries(input.semesters).forEach(([semesterKey, semesterValue]: [string, any], index) => {
@@ -289,7 +265,6 @@ export class EditSemesterComponent implements OnInit, OnChanges {
         examend: semesterValue.exams.endDate,
         examduration: semesterValue.exams.duration,
       };
-  
       output.push(newSemester);
     });
   
@@ -329,7 +304,7 @@ export class EditSemesterComponent implements OnInit, OnChanges {
     this.api.editSemestersByIntakeId(`${this.selectedIntakeID}`, finalData)
     .subscribe({
       next: (res) => {
-        console.log(res);
+        alert("Semester Edited")
       },
       error: (err) => {
         console.log(err);

@@ -56,14 +56,11 @@ export class CreateIntakeComponent implements OnInit, OnChanges {
 
 
   ngOnInit(): void {
-    // console.log(this.parentId, this.parentType);
-    // this.loadGroupList();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
       if (changes['parentId'] || changes['parentType']) {
         console.log(this.parentId, this.parentType);
-        // console.log(this.parentType);
         this.loadGroupList();
       }
   }

@@ -33,7 +33,7 @@ export class DataService {
 
   private getHeaders(): HttpHeaders {
     // const token = this.getToken();
-    const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzY2hlZHVsZXJAbWFpbC5hcHUuZWR1Lm15Iiwicm9sZSI6InNjaGVkdWxlciIsImV4cCI6MTcyMTk5NzMzMn0.aHx_CNhNfa751oMAeSfBaVPnGudj2bM3p_OjqyH2vJQ`
+    const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzY2hlZHVsZXJAbWFpbC5hcHUuZWR1Lm15Iiwicm9sZSI6InNjaGVkdWxlciIsImV4cCI6MTcyMjAwNDg3Nn0.6zr8E11vgkLoPlYq7evZaPdkZe1NrdcfENgnoIKaj-c`
 
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { DateAdapter } from '@angular/material/core';
 import { DataService } from 'src/app/services/data.service';
@@ -17,9 +17,9 @@ interface DateRange {
 export class CreateSemesterComponent implements OnInit, OnChanges {
   @Input() parentId: string | null = '';
   @Input() parentType: string | null = '';
+  @Input() numberOfSemesters: any = 2;
 
   dateRangeForm!: FormGroup;
-  numberOfSemesters = 1;
   selectedIntakeID!: Number;
   semesters: number[] = [];
   groupIdList: number [] | null = null;
@@ -36,7 +36,8 @@ export class CreateSemesterComponent implements OnInit, OnChanges {
 
   constructor(
     private api: DataService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef
   ) {}
 
   loadGroupIdList() {
@@ -72,15 +73,26 @@ export class CreateSemesterComponent implements OnInit, OnChanges {
     this.selectedIntakeID = event.value;
   }
 
+  updateSemesters() {
+    this.semesters = Array(this.numberOfSemesters).fill(0).map((_, i) => i + 1);
+  }
+
   ngOnInit() {
     this.semesters = Array(this.numberOfSemesters).fill(0).map((_, i) => i + 1);
     this.initForm();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['parentId'] || changes['parentType']) {
-      console.log(this.parentId, this.parentType);
+    if (changes['parentId'] || changes['parentType'] || changes['numberOfSemesters']) {
+      console.log(this.parentId, this.parentType, this.numberOfSemesters);
       this.loadGroupIdList();
+      
+      if (changes['numberOfSemesters']) {
+        this.updateSemesters();
+        this.initForm();
+      }
+      
+      this.cdr.detectChanges();
     }
   }
 
