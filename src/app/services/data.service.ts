@@ -94,6 +94,10 @@ export class DataService {
     return this.http.get<any>(`${this.apiurl}/scheduler/intake/all?group_ids=${list}`, { headers: this.getHeaders() });
   }
 
+  getIntakesByYear(year: Number) {
+    return this.http.get<any>(`${this.apiurl}/scheduler/intake/all?year=${year}`, { headers: this.getHeaders() });
+  }
+
   // Get all the semesters of a certain IntakeID
   getSemestersByIntakeId(id: any): Observable<any> {
     const params = { intakeid: id.toString() };
@@ -102,7 +106,6 @@ export class DataService {
 
   // Get all the semesters from a list of intakeid.
   getSemestersByIntakeIdList(list: Number []) {
-
     return this.http.get<any>(`${this.apiurl}/scheduler/semester/all?intake_ids=${list}`, {headers: this.getHeaders() })
   }
 

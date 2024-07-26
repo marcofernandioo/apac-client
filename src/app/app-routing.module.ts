@@ -4,8 +4,8 @@ import { RouterModule, Routes } from '@angular/router';
 // import { AuthGuard } from './core/guards/auth.guard';
 
 import { LoginComponent } from './pages/login/login.component';
-
 import { TimelineComponent } from './pages/timeline/timeline.component';
+import { InfoComponent } from './pages/info/info.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -16,21 +16,11 @@ const routes: Routes = [
   {
     path: 'scheduler',
     component: TimelineComponent
+  },
+  {
+    path: 'admin',
+    component: InfoComponent
   }
-//   { 
-//     path: 'home', 
-//     loadChildren: () => import('./home/home.module').then(m => m.HomeModule) 
-//   },
-//   { 
-//     path: 'auth', 
-//     loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) 
-//   },
-//   { 
-//     path: 'dashboard', 
-//     loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule),
-//     canActivate: [AuthGuard] 
-//   },
-//   { path: '**', component: PageNotFoundComponent }
 ];
 
 @NgModule({

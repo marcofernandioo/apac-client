@@ -33,7 +33,7 @@ export class TimelineComponent implements OnInit {
   selectedParentType: string = '';
   selectedParentCode: string = '';
   semesterNumbers: Number = 2;
-
+  showTimeline = true;
 
   timelineDataset: DataSet<ITimeline> = new DataSet();
 
@@ -77,6 +77,10 @@ export class TimelineComponent implements OnInit {
     }
     this.loadTimelineDataset();
     this.cdr.detectChanges();
+  }
+
+  toggleView() {
+    this.showTimeline = !this.showTimeline;
   }
 
   async getGroups(): Promise<IGroup[]> {

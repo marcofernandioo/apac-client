@@ -19,11 +19,15 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatButtonModule} from '@angular/material/button';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { CreateGroupComponent } from './components/create-group/create-group.component';
 import { CreateIntakeComponent } from './components/create-intake/create-intake.component';
 import { CreateSemesterComponent } from './components/create-semester/create-semester.component';
 import { EditSemesterComponent } from './components/edit-semester/edit-semester.component';
+import { InfoComponent } from './pages/info/info.component';
+import { IntakeTableComponent } from './components/intake-table/intake-table.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +38,9 @@ import { EditSemesterComponent } from './components/edit-semester/edit-semester.
     CreateGroupComponent,
     CreateIntakeComponent,
     CreateSemesterComponent,
-    EditSemesterComponent
+    EditSemesterComponent,
+    InfoComponent,
+    IntakeTableComponent
   ],
   imports: [
     BrowserModule,
@@ -50,7 +56,9 @@ import { EditSemesterComponent } from './components/edit-semester/edit-semester.
     MatSelectModule,
     MatButtonModule,
     ReactiveFormsModule,
-    MatIconModule
+    MatIconModule,
+    MatTableModule,
+    MatSlideToggleModule
   ],
   providers: [{ provide: DateAdapter, useClass: NativeDateAdapter }],
   bootstrap: [AppComponent]

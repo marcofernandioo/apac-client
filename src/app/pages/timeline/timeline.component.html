@@ -10,7 +10,24 @@
     </mat-select>
 </mat-form-field>
 
-<app-timeline-table [subProgrammeList]="timelineDataset" [semesters]="semesters" ></app-timeline-table>
+<mat-slide-toggle (change)="toggleView()">
+  {{ showTimeline ? 'Switch to Intake Table' : 'Switch to Timeline' }}
+</mat-slide-toggle>
+
+<div [ngSwitch]="showTimeline">
+  <app-timeline-table 
+    *ngSwitchCase="true"
+    [subProgrammeList]="timelineDataset" 
+    [semesters]="semesters">
+  </app-timeline-table>
+
+  <app-intake-table 
+    *ngSwitchCase="false">
+  </app-intake-table>
+</div>
+
+<!-- <app-timeline-table [subProgrammeList]="timelineDataset" [semesters]="semesters" ></app-timeline-table>
+<app-intake-table></app-intake-table> -->
 
 <br/>
 <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" animationDuration="0ms">
