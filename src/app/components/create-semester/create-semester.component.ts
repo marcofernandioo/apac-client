@@ -43,11 +43,8 @@ export class CreateSemesterComponent implements OnInit, OnChanges {
   loadGroupIdList() {
     this.api.getGroups(this.parentId, this.parentType).subscribe({
       next: (response) => {
-        console.log('groups:')
-        console.log(response);
         this.groupIdList = response.map(item => item.id)
         this.loadIntakesList(this.groupIdList);
-        console.log(this.groupIdList)
       },
       error: (error) => {
         console.error('Error loading groups:', error);
@@ -59,12 +56,11 @@ export class CreateSemesterComponent implements OnInit, OnChanges {
   loadIntakesList(list: any) {
     this.api.getIntakesByGroupIdList(list).subscribe({
       next: (response) => {
-        console.log('Another data loaded:', response);
         this.availableIntakes = response;
       },
       error: (error) => {
-        console.error('Error loading another data:', error);
-        alert("Error loading another data. Please try again.");
+        console.error('Error intakes:', error);
+        alert("Error loading Intakes. Please try again.");
       }
     })
   }
@@ -84,7 +80,6 @@ export class CreateSemesterComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['parentId'] || changes['parentType'] || changes['numberOfSemesters']) {
-      console.log(this.parentId, this.parentType, this.numberOfSemesters);
       this.loadGroupIdList();
       
       if (changes['numberOfSemesters']) {
@@ -224,11 +219,8 @@ export class CreateSemesterComponent implements OnInit, OnChanges {
         examduration: semesterValue.exams.duration,
         intakeid: this.selectedIntakeID
       };
-  
       output.push(newSemester);
     });
-    console.log(output);
-  
     return output;
   }
 

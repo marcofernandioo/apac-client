@@ -9,7 +9,6 @@ interface DateRange {
   label: string;
 }
 
-
 @Component({
   selector: 'app-edit-semester',
   templateUrl: './edit-semester.component.html',
@@ -71,7 +70,6 @@ export class EditSemesterComponent implements OnInit, OnChanges {
         this.loadIntakesList(this.groupIdList);
       },
       error: (error) => {
-        console.error('Error loading groups:', error);
         alert("Error loading groups. Please try again.");
       }
     });
@@ -83,8 +81,7 @@ export class EditSemesterComponent implements OnInit, OnChanges {
         this.availableIntakes = response;
       },
       error: (error) => {
-        console.error('Error loading another data:', error);
-        alert("Error loading another data. Please try again.");
+        alert("Error loading Intakes. Please try again.");
       }
     })
   }
@@ -92,36 +89,36 @@ export class EditSemesterComponent implements OnInit, OnChanges {
   initForm() {
     const semestersGroup = this.fb.group({});
 
-  // Clear existing controls
-  if (this.dateRangeForm) {
-    const existingSemesters = this.dateRangeForm.get('semesters') as FormGroup;
-    Object.keys(existingSemesters.controls).forEach(key => {
-      existingSemesters.removeControl(key);
-    });
-  }
+    // Clear existing controls
+    if (this.dateRangeForm) {
+      const existingSemesters = this.dateRangeForm.get('semesters') as FormGroup;
+      Object.keys(existingSemesters.controls).forEach(key => {
+        existingSemesters.removeControl(key);
+      });
+    }
 
-  this.semesters.forEach(semesterNum => {
-    const semesterGroup = this.fb.group({});
-    
-    this.dateRanges.forEach(range => {
-      semesterGroup.addControl(range.name, this.fb.group({
-        startDate: [''],
-        endDate: [''],
-        duration: ['']
-      }));
-      this.editingState[`semester${semesterNum}_${range.name}`] = false;
+    this.semesters.forEach(semesterNum => {
+      const semesterGroup = this.fb.group({});
+      
+      this.dateRanges.forEach(range => {
+        semesterGroup.addControl(range.name, this.fb.group({
+          startDate: [''],
+          endDate: [''],
+          duration: ['']
+        }));
+        this.editingState[`semester${semesterNum}_${range.name}`] = false;
+      });
+
+      semestersGroup.addControl(`semester${semesterNum}`, semesterGroup);
     });
 
-    semestersGroup.addControl(`semester${semesterNum}`, semesterGroup);
-  });
-
-  if (this.dateRangeForm) {
-    this.dateRangeForm.setControl('semesters', semestersGroup);
-  } else {
-    this.dateRangeForm = this.fb.group({
-      semesters: semestersGroup
-    });
-  }
+    if (this.dateRangeForm) {
+      this.dateRangeForm.setControl('semesters', semestersGroup);
+    } else {
+      this.dateRangeForm = this.fb.group({
+        semesters: semestersGroup
+      });
+    }
   }
 
   onSelectedIntakeChange(event: any) {

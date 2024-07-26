@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpErrorResponse, HttpParams  } from '@angula
 import { Observable, throwError } from 'rxjs';
 import { tap } from 'rxjs/operators'
 import { catchError } from 'rxjs/operators';
+import { jwtDecode } from 'jwt-decode';
 import { IIntake } from '../interfaces/intake.interface';
 import { IUserLogin } from '../interfaces/userlogin.interface'
 import { ILoginResponse } from '../interfaces/loginresponse.interface'
@@ -19,6 +20,24 @@ export class DataService {
 
   constructor(private http: HttpClient) { }
 
+  decodeToken(): any {
+    const token = this.getToken();
+    if (token) {
+      try {
+        console.log(jwtDecode(token));
+        return jwtDecode(token);
+      } catch (Error) {
+        return null;
+      }
+    }
+    return null;
+  }
+
+  getUserRole(): string | null {
+    const decodedToken = this.decodeToken();
+    return decodedToken ? decodedToken.role : null;
+  }
+
   setToken(token: string) {
     localStorage.setItem(this.tokenKey, token);
   }
@@ -31,9 +50,9 @@ export class DataService {
     localStorage.removeItem(this.tokenKey);
   }
 
-  private getHeaders(): HttpHeaders {
-    // const token = this.getToken();
-    const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzY2hlZHVsZXJAbWFpbC5hcHUuZWR1Lm15Iiwicm9sZSI6InNjaGVkdWxlciIsImV4cCI6MTcyMjAwNDg3Nn0.6zr8E11vgkLoPlYq7evZaPdkZe1NrdcfENgnoIKaj-c`
+  getHeaders(): HttpHeaders {
+    const token = this.getToken();
+    // const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzY2hlZHVsZXJAbWFpbC5hcHUuZWR1Lm15Iiwicm9sZSI6InNjaGVkdWxlciIsImV4cCI6MTcyMjAwNDg3Nn0.6zr8E11vgkLoPlYq7evZaPdkZe1NrdcfENgnoIKaj-c`
 
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`
@@ -72,7 +91,7 @@ export class DataService {
 
   // Get Intakes by list of Group IDs.
   getIntakesByGroupIdList(list: Number[]) {
-    return this.http.get<any>(`${this.apiurl}/scheduler/intake/all?group_ids=${list}`, {headers: this.getHeaders()})
+    return this.http.get<any>(`${this.apiurl}/scheduler/intake/all?group_ids=${list}`, { headers: this.getHeaders() });
   }
 
   // Get all the semesters of a certain IntakeID

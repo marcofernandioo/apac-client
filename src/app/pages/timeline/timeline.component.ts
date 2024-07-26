@@ -52,7 +52,6 @@ export class TimelineComponent implements OnInit {
     this.api.getParents().subscribe({
       next: (response) => {
         this.parentList = response.items;
-        console.log(this.parentList);
       },
       error: (error) => {
         console.error('Error loading parents:', error);
@@ -65,7 +64,6 @@ export class TimelineComponent implements OnInit {
   }
 
   onSelectedParentChange(event: MatSelectChange) {
-    console.log('changed from parent',this.selectedParentId, this.selectedParentType)
     this.selectedParentId = event.value.id;
     this.selectedParentCode = event.value.code;
     if (event.value.coursename)  {
@@ -85,7 +83,6 @@ export class TimelineComponent implements OnInit {
     return new Promise((resolve, reject) => {
       this.api.getGroups(this.selectedParentId, this.selectedParentType).subscribe({
         next: (res) => {
-          console.log(res);
           resolve(res);
         },
         error: (err) => {

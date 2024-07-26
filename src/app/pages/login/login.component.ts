@@ -27,9 +27,18 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.email, this.password)
       .subscribe({
         next: (response) => {
-          console.log('Login successful', response);
-          // Navigate to a protected route, e.g., dashboard
-          // this.router.navigate(['/dashboard']);
+          if (response.access_token) {
+            // this.authService.setToken(response.access_token);
+            const role = this.authService.getUserRole();
+            if (role === 'admin') {
+              this.router.navigate(['/admin']);
+            } else if (role === 'scheduler') {
+              this.router.navigate(['/scheduler'])
+            } else {
+              console.log('invalid');
+              this.authService.clearToken();
+            }
+          }
         },
         error: (error) => {
           console.error('Login failed', error);

@@ -5,7 +5,8 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
 
 import { DataService } from 'src/app/services/data.service';
 
-// Custom date formats
+// Custom date formats        console.log(error);
+
 export const MY_DATE_FORMATS = {
   parse: {
     dateInput: 'YYYY-MM-DD',

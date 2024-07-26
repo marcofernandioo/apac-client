@@ -32,7 +32,6 @@ export class TimelineTableComponent implements OnInit, OnChanges, OnDestroy {
   constructor(
     private cdr: ChangeDetectorRef, 
   ) {
-    console.log(this.semesters);
   }
 
   ngOnInit() {
@@ -40,8 +39,6 @@ export class TimelineTableComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['subProgrammeList'] || changes['semesters']) {
-      console.log("SubProgrammeList changed:", this.subProgrammeList);
-      console.log("Semesters changed:", this.semesters);
       this.updateTimeline();
     }
   }
