@@ -24,6 +24,6 @@
         <app-create-semester [parentId]="selectedParentId" [parentType]="selectedParentType"></app-create-semester>
     </mat-tab>
     <mat-tab label="Edit Semester">
-        <app-edit-semester></app-edit-semester>
+        <app-edit-semester [parentId]="selectedParentId" [parentType]="selectedParentType"></app-edit-semester>
     </mat-tab>
 </mat-tab-group>

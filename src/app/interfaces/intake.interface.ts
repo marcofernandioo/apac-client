@@ -1,9 +1,9 @@
 export interface IIntake {
     id: number;
-    orientation: string;  // TypeScript uses string for Date
-    startdate: string;    // TypeScript uses string for Date
-    enddate: string;      // TypeScript uses string for Date
+    orientation: string; 
+    startdate: string;   
+    enddate: string;      
     duration: number;
-    code: string | null;  // Nullable string
+    code: string | null;  
     groupid: number;
 }

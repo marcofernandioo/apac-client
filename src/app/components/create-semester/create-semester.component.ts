@@ -19,7 +19,7 @@ export class CreateSemesterComponent implements OnInit, OnChanges {
   @Input() parentType: string | null = '';
 
   dateRangeForm!: FormGroup;
-  numberOfSemesters = 2;
+  numberOfSemesters = 1;
   selectedIntakeID!: Number;
   semesters: number[] = [];
   groupIdList: number [] | null = null;
@@ -200,6 +200,7 @@ export class CreateSemesterComponent implements OnInit, OnChanges {
         name: `Semester ${index + 1}`,
         startdate: semesterValue.semester.startDate,
         enddate: semesterValue.semester.endDate,
+        duration: semesterValue.semester.duration,
         midsemstart: semesterValue.midSemesterBreak.startDate,
         midsemend: semesterValue.midSemesterBreak.endDate,
         midsemduration: semesterValue.midSemesterBreak.duration,
@@ -214,6 +215,7 @@ export class CreateSemesterComponent implements OnInit, OnChanges {
   
       output.push(newSemester);
     });
+    console.log(output);
   
     return output;
   }
@@ -249,6 +251,7 @@ export class CreateSemesterComponent implements OnInit, OnChanges {
       const formData = this.dateRangeForm.value;
       const formattedData = this.formatDates(formData);
       const finalData = this.formatData(formattedData);
+      console.log(finalData);
       this.api.createBulkSemesters(finalData, this.selectedIntakeID).subscribe({
         next: (res) => {
           alert('Semester created successfully!')

@@ -1,1 +1,55 @@
-<p>edit-semester works!</p>
+<mat-form-field>
+    <mat-label>Select an Intake</mat-label>
+    <mat-select (selectionChange)="onSelectedIntakeChange($event)">
+      <mat-option *ngFor="let intake of availableIntakes" [value]="intake.id">
+        {{ intake.code }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  
+  <form [formGroup]="dateRangeForm">
+    <div formGroupName="semesters">
+      <div *ngFor="let semesterNum of semesters" [formGroupName]="'semester' + semesterNum">
+        <h2>Semester {{ semesterNum }}</h2>
+        <div *ngFor="let range of dateRanges" [formGroupName]="range.name" class="range-row">
+            <div class="range-content">
+              <h3>{{ range.label }}</h3>
+              <mat-form-field appearance="fill">
+                <mat-label>Start Date</mat-label>
+                <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+                <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+                <mat-datepicker #startPicker></mat-datepicker>
+              </mat-form-field>
+          
+              <mat-form-field appearance="fill">
+                <mat-label>End Date</mat-label>
+                <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+                <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+                <mat-datepicker #endPicker></mat-datepicker>
+              </mat-form-field>
+          
+              <mat-form-field appearance="fill">
+                <mat-label>Duration (weeks)</mat-label>
+                <input matInput type="number" formControlName="duration">
+              </mat-form-field>
+            </div>
+          
+            <div class="action-buttons">
+              <button mat-icon-button *ngIf="!isEditing(semesterNum, range.name)" (click)="toggleEdit(semesterNum, range.name)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <ng-container *ngIf="isEditing(semesterNum, range.name)">
+                <button mat-icon-button (click)="saveRow(semesterNum, range.name)">
+                  <mat-icon>save</mat-icon>
+                </button>
+                <button mat-icon-button (click)="cancelEdit(semesterNum, range.name)">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </ng-container>
+            </div>
+          </div>
+      </div>
+    </div>
+  </form>
+  
+  <button mat-raised-button color="primary" (click)="submitForm()">Create Semesters</button>

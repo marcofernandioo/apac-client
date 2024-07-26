@@ -18,6 +18,7 @@ import {NativeDateAdapter, DateAdapter, MatNativeDateModule} from '@angular/mate
 import {MatSelectModule} from '@angular/material/select';
 import {MatButtonModule} from '@angular/material/button';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 
 import { CreateGroupComponent } from './components/create-group/create-group.component';
 import { CreateIntakeComponent } from './components/create-intake/create-intake.component';
@@ -48,7 +49,8 @@ import { EditSemesterComponent } from './components/edit-semester/edit-semester.
     MatNativeDateModule,
     MatSelectModule,
     MatButtonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatIconModule
   ],
   providers: [{ provide: DateAdapter, useClass: NativeDateAdapter }],
   bootstrap: [AppComponent]

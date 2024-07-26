@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http'
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpErrorResponse, HttpParams  } from '@angular/common/http'
+import { Observable, throwError } from 'rxjs';
 import { tap } from 'rxjs/operators'
+import { catchError } from 'rxjs/operators';
 import { IIntake } from '../interfaces/intake.interface';
 import { IUserLogin } from '../interfaces/userlogin.interface'
 import { ILoginResponse } from '../interfaces/loginresponse.interface'
@@ -32,7 +33,7 @@ export class DataService {
 
   private getHeaders(): HttpHeaders {
     // const token = this.getToken();
-    const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzY2hlZHVsZXJAbWFpbC5hcHUuZWR1Lm15Iiwicm9sZSI6InNjaGVkdWxlciIsImV4cCI6MTcyMTg1Njk1NX0.GwNIsqseMnKafOl0bTyuaf7lNfBvWtokwuom6RYEtGg`
+    const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzY2hlZHVsZXJAbWFpbC5hcHUuZWR1Lm15Iiwicm9sZSI6InNjaGVkdWxlciIsImV4cCI6MTcyMTkxNDI1NX0.RwamWd6eM5M0_Grlk73-Un7vn3ebGzACe3WswQoBock`
 
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`
@@ -72,6 +73,40 @@ export class DataService {
   // Get Intakes by list of Group IDs.
   getIntakesByGroupIdList(list: Number[]) {
     return this.http.get<any>(`${this.apiurl}/scheduler/intake/all?group_ids=${list}`, {headers: this.getHeaders()})
+  }
+
+  // Get all the semesters of a certain IntakeID
+  getSemestersByIntakeId(id: any): Observable<any> {
+    const params = { intakeid: id.toString() };
+    return this.http.get<any>(`${this.apiurl}/scheduler/semester/all`, { params, headers: this.getHeaders() })
+  }
+
+  // Edit semesters by intake id.
+  editSemestersByIntakeId(id: string, semesters: any) {
+    const url = `${this.apiurl}/scheduler/semester/update`;
+    const params = { intake_id: id.toString() };
+    return this.http.post<any[]>(url, semesters, { params, headers: this.getHeaders() })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'An unknown error occurred!';
+    if (error.error instanceof ErrorEvent) {
+      // Client-side or network error
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Backend returned an unsuccessful response code
+      if (error.status === 422) {
+        // Unprocessable Entity error
+        errorMessage = `Validation Error: ${JSON.stringify(error.error.detail)}`;
+      } else {
+        errorMessage = `Backend returned code ${error.status}, body was: ${JSON.stringify(error.error)}`;
+      }
+    }
+    console.error(errorMessage);
+    return throwError(() => new Error(errorMessage));
   }
 
   login(email: string, password: string): Observable<ILoginResponse> {
