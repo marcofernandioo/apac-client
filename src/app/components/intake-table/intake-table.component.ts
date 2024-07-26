@@ -29,12 +29,10 @@ export class IntakeTableComponent implements OnInit {
   }
 
   loadAllIntakes() {
-    console.log('log')
     this.api.getAllIntakes().subscribe({
       next: (res: IIntake[]) => {
         this.allIntakes = res;
         this.extractYears();
-        console.log(res);
         this.selectedYear = this.yearList[0]; // Select the first year by default
         this.filterIntakesByYear();
       },

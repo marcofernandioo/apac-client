@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 // import { PageNotFoundComponent } from './core/components/page-not-found/page-not-found.component';
-// import { AuthGuard } from './core/guards/auth.guard';
+import { AuthGuardService } from './services/auth-guard.service';
 
 import { LoginComponent } from './pages/login/login.component';
 import { TimelineComponent } from './pages/timeline/timeline.component';
@@ -11,15 +11,17 @@ const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   {
     path: 'login',
-    component: LoginComponent
+    component: LoginComponent,
   },
   {
     path: 'scheduler',
-    component: TimelineComponent
+    component: TimelineComponent,
+    canActivate: [AuthGuardService]
   },
   {
     path: 'admin',
-    component: InfoComponent
+    component: InfoComponent,
+    canActivate: [AuthGuardService]
   }
 ];
 

@@ -24,7 +24,7 @@ export class DataService {
     const token = this.getToken();
     if (token) {
       try {
-        console.log(jwtDecode(token));
+        // console.log(jwtDecode(token));
         return jwtDecode(token);
       } catch (Error) {
         return null;
@@ -144,7 +144,7 @@ export class DataService {
       .pipe(
         tap(response => {
           // Store the token in localStorage
-          localStorage.setItem('access_token', response.access_token);
+          localStorage.setItem(this.tokenKey, response.access_token);
         })
       );
   }
