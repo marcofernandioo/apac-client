@@ -12,4 +12,5 @@ export interface ISemester {
     examstart: Date,
     examend: Date,
     examduration: number,
+    intakeid?: number
 }

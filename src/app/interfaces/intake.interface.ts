@@ -4,6 +4,6 @@ export interface IIntake {
     startdate: string;   
     enddate: string;      
     duration: number;
-    code: string | null;  
+    code: string;  
     groupid: number;
 }

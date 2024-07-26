@@ -33,7 +33,7 @@ export class DataService {
 
   private getHeaders(): HttpHeaders {
     // const token = this.getToken();
-    const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzY2hlZHVsZXJAbWFpbC5hcHUuZWR1Lm15Iiwicm9sZSI6InNjaGVkdWxlciIsImV4cCI6MTcyMTkxNDI1NX0.RwamWd6eM5M0_Grlk73-Un7vn3ebGzACe3WswQoBock`
+    const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzY2hlZHVsZXJAbWFpbC5hcHUuZWR1Lm15Iiwicm9sZSI6InNjaGVkdWxlciIsImV4cCI6MTcyMTk5NzMzMn0.aHx_CNhNfa751oMAeSfBaVPnGudj2bM3p_OjqyH2vJQ`
 
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`
@@ -79,6 +79,12 @@ export class DataService {
   getSemestersByIntakeId(id: any): Observable<any> {
     const params = { intakeid: id.toString() };
     return this.http.get<any>(`${this.apiurl}/scheduler/semester/all`, { params, headers: this.getHeaders() })
+  }
+
+  // Get all the semesters from a list of intakeid.
+  getSemestersByIntakeIdList(list: Number []) {
+
+    return this.http.get<any>(`${this.apiurl}/scheduler/semester/all?intake_ids=${list}`, {headers: this.getHeaders() })
   }
 
   // Edit semesters by intake id.

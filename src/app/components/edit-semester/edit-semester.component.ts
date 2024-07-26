@@ -143,11 +143,11 @@ export class EditSemesterComponent implements OnInit, OnChanges {
   fetchSemesterData() {
     this.api.getSemestersByIntakeId(String(this.selectedIntakeID)).subscribe({
       next: (res) => {
-        console.log(res);
+        // console.log(res);
         this.populateForm(res);
       },
       error: (err) => {
-        console.log(err);
+        // console.log(err);
         alert('error')
       }
     })
@@ -243,7 +243,7 @@ export class EditSemesterComponent implements OnInit, OnChanges {
       semesters: formData.semesters
     };
 
-    console.log(dataToSend);
+    // console.log(dataToSend);
 
     delete this.originalValues[key];
     rangeGroup.disable();
@@ -260,7 +260,7 @@ export class EditSemesterComponent implements OnInit, OnChanges {
     // Revert to original values
     if (this.originalValues[key]) {
       rangeGroup.patchValue(this.originalValues[key]);
-      console.log(this.originalValues[key]);
+      // console.log(this.originalValues[key]);
       delete this.originalValues[key]; // Clean up stored original values
     }
     
@@ -270,7 +270,7 @@ export class EditSemesterComponent implements OnInit, OnChanges {
 
   
   formatData(input: any): any {
-    console.log(input);
+    // console.log(input);
     const output: any = [];
 
     Object.entries(input.semesters).forEach(([semesterKey, semesterValue]: [string, any], index) => {

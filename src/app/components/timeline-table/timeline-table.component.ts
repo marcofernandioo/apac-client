@@ -1,6 +1,10 @@
-import { Component, OnInit, ElementRef, ViewChild, Input, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, Input, OnChanges, SimpleChanges, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { DataSet } from 'vis-data';
 import { Timeline } from 'vis-timeline';
+import { Subscription} from 'rxjs';
+
+import { ITimeline } from 'src/app/interfaces/timeline.interface';
+import { TimelineDataService } from 'src/app/services/timeline-data.service';
 
 
 interface IGroup {
@@ -13,7 +17,7 @@ interface IGroup {
   templateUrl: './timeline-table.component.html',
   styleUrls: ['./timeline-table.component.css']
 })
-export class TimelineTableComponent implements OnInit, OnChanges {
+export class TimelineTableComponent implements OnInit, OnChanges, OnDestroy {
 
   @ViewChild('visualization', { static: true }) private visualizationElement!: ElementRef;
   private timeline!: Timeline;
@@ -21,21 +25,78 @@ export class TimelineTableComponent implements OnInit, OnChanges {
   @Input() semesters!: DataSet<any>;
   programmeListGroup: DataSet<IGroup> = new DataSet<IGroup>();
 
+  subscription!: Subscription;
+  timelineData!: DataSet<ITimeline>;
 
-  constructor(private cdr: ChangeDetectorRef) {}
+
+  constructor(
+    private cdr: ChangeDetectorRef, 
+    private timelineDataService: TimelineDataService
+  ) {
+    console.log(this.semesters);
+  }
 
   ngOnInit() {
-    this.createGanttChart();
+    // this.createGanttChart();
+    console.log(this.semesters);
+    // this.subscription = this.timelineDataService.timelineData$.subscribe(
+    //   data => {
+    //     if (data) {
+    //       this.timelineData = data;
+    //       // Handle the updated data
+    //       console.log('Timeline data updated:', this.timelineData);
+    //     }
+    //   }
+    // );
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['subProgrammeList'] || changes['subItems']) {
-      console.log("in component: ")
-      console.log(this.subProgrammeList);
-      this.updateProgrammeList();
+    if (changes['subProgrammeList'] || changes['semesters']) {
+      console.log("SubProgrammeList changed:", this.subProgrammeList);
+      console.log("Semesters changed:", this.semesters);
+      this.updateTimeline();
+    }
+    // if (changes['semesters']) {
+
+    //   this.updateTimeline();
+    // }
+  }
+
+  ngOnDestroy() {
+    if (this.timeline) {
+      this.timeline.destroy();
+      this.subProgrammeList = new DataSet();
+      this.semesters = new DataSet();
     }
   }
 
+  private updateTimeline() {
+    // console.log(this.timeline);
+    // // const groups = this.programmeListGroup.get() as IGroup[];
+    // if (this.timeline) {
+    //   console.log(this.subProgrammeList);
+    //   console.log(this.programmeListGroup);
+    //   this.timeline.setItems(this.subProgrammeList);
+    //   this.timeline.setGroups(this.programmeListGroup);
+    //   // this.timeline.redraw();
+    //   this.cdr.detectChanges();
+    // }
+    // this.createGanttChart();
+
+    // if (this.timeline) {
+    //   this.timeline.setItems(this.semesters);
+    //   this.timeline.setGroups(this.subProgrammeList);
+    //   this.timeline.redraw();
+    // }
+
+
+    console.log('Updating timeline');
+  if (this.timeline) {
+    this.timeline.destroy();
+  }
+  this.createGanttChart();
+  this.cdr.detectChanges();
+  }
   updateProgrammeList() {
     if (this.timeline) {
       const groups = this.programmeListGroup.get() as IGroup[];
